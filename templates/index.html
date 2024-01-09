@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>App Resep</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5e5d8; /* Warna coklat muda */
+        }
+
+        #sidebar {
+            background-color: #333; /* Warna hitam untuk sidebar */
+            padding: 20px;
+            color: white;
+            position: fixed;
+            height: 100%;
+            width: 200px;
+            overflow: auto;
+        }
+
+        #content {
+            margin-left: 220px; /* Sesuaikan dengan lebar sidebar dan berikan sedikit margin */
+            padding: 20px;
+        }
+
+        .reseplist {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+        }
+
+        .resepcard {
+            width: 100%; /* Use 100% width for responsiveness */
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+            position: relative;
+            box-sizing: border-box; /* Ensure padding and border don't increase element width */
+        }
+
+        .resepcard img {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 10px; /* Berikan sedikit margin di bawah gambar */
+        }
+
+        #search-form {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="sidebar">
+        <h5>Web App-Resep</h5>
+        <ul>
+            <li><a href="{{ url_for('view_recipes') }}">List Resep</a></li>
+            {% if current_user.is_authenticated %}
+                <li><a href="{{ url_for('add_recipe') }}">Tambah Resep</a></li>
+                <li><a href="{{ url_for('logout') }}">Logout</a></li>
+            {% else %}
+                <li><a href="{{ url_for('login') }}">Login</a></li>
+                <li><a href="{{ url_for('register') }}">Register</a></li>
+            {% endif %}
+        </ul>
+    </div>
+
+    <div id="content">
+        <div id="header">
+            {% if request.endpoint not in ['edit_recipe', 'add_recipe'] %}
+            <h1>Selamat Datang, di Web Resep</h1>
+            <form id="search-form" action="{{ url_for('search') }}" method="GET">
+                <label for="search">Cari Resep:</label>
+                <input type="text" id="search" name="search" class="form-control" placeholder="Masukkan kata kunci">
+                <button type="submit" class="btn btn-primary">Cari</button>
+            </form>
+            {% endif %}
+        </div>
+        {% block content %}
+        <!-- Recipe List Section -->
+        <div class="row">
+            {% for resep in recipes %}
+                <div class="col-md-4 mb-4">
+                    <div class="card" data-toggle="modal" data-target="#exampleModal{{ loop.index }}">
+                        {% if resep.gambar_filename %}
+                            <img src="{{ url_for('static', filename='gambar/' + resep.gambar_filename) }}" class="card-img-top" alt="{{ resep.title }}">
+                        {% else %}
+                            <!-- Sediakan gambar pengganti jika gambar tidak tersedia -->
+                            <img src="{{ url_for('static', filename='placeholder.jpg') }}" class="card-img-top" alt="Gambar Tidak Tersedia">
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{ resep.title }}</h5>
+                            <p class="card-text">{{ resep.content }}</p>
+                            <p class="card-text">Kategori: {{ resep.category }}</p>
+                        </div>
+                    </div>
+                </div>
+    
+                <!-- Modal for Recipe Details -->
+                <div class="modal fade" id="exampleModal{{ loop.index }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">{{ resep.title }}</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <img src="{{ url_for('static', filename='gambar/' + resep.gambar) }}" class="img-fluid" alt="{{ resep.title }}">
+                                <p>{{ resep.content }}</p>
+                                <p>Kategori: {{ resep.category }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        {% endblock %}
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>

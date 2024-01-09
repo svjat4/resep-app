@@ -1,0 +1,26 @@
+{% extends 'index.html' %}
+
+{% block content %}
+    <div class="container mt-4">
+        <h1>Edit Recipe</h1>
+        <form method="POST" action="{{ url_for('edit_recipe', id=id) }}">
+            <div class="form-group">
+                <label for="title">Title:</label>
+                <input type="text" name="title" class="form-control" value="{{ recipe[1] }}" placeholder="Enter recipe title" required>
+            </div>
+            <div class="form-group">
+                <label for="content">Content:</label>
+                <textarea name="content" class="form-control" placeholder="Enter recipe content" rows="5" required>{{ recipe[2] }}</textarea>
+            </div>
+            <div class="form-group">
+                <label for="category">Category:</label>
+                <input type="text" name="category" class="form-control" value="{{ recipe[3] }}" placeholder="Enter recipe category" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Update Recipe</button>
+        </form>
+    </div>
+
+    <!-- Tombol untuk kembali ke halaman beranda -->
+    <a href="{{ url_for('index') }}" class="btn btn-primary">Kembali ke Beranda</a>
+    
+{% endblock %}

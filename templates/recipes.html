@@ -1,0 +1,35 @@
+{% extends 'index.html' %}
+
+{% block content %}
+    <div class="container mt-4">
+        <h1 class="text-center mb-4">Resep</h1>
+        <div class="row reseplist">
+            {% for resep in recipes %}
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        {% if resep.image is defined and resep.image %}
+                            <img src="{{ url_for('static', filename='gambar/' + resep.image) }}" class="card-img-top" alt="{{ resep.title }}">
+                        {% else %}
+                            <img src="{{ url_for('static', filename='placeholder.jpg') }}" class="card-img-top" alt="Gambar Tidak Tersedia">
+                        {% endif %}
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">{{ resep.title }}</h5>
+                            <p class="card-text flex-grow-1">{{ resep.content }}</p>
+                            <p class="card-text"><small class="text-muted">{{ resep.category }}</small></p>
+                            {% if current_user.is_authenticated %}
+                                <div class="text-center mt-auto">
+                                    <a class="edit-button btn btn-primary" href="{{ url_for('edit_recipe', id=resep.id) }}">Edit Resep</a>
+                                    <a class="hapus-button btn btn-danger" href="{{ url_for('hapus_resep', resep_id=resep.id) }}">Hapus Resep</a>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <!-- Tombol untuk kembali ke halaman beranda -->
+    <a href="{{ url_for('index') }}" class="btn btn-primary">Kembali ke Beranda</a>
+
+{% endblock %}
